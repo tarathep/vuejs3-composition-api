@@ -1,25 +1,24 @@
 <script setup lang="ts">
+import { ref } from "vue"
+
 const periods = ["Today", "This Week", "This Month"]
+
+const selectedPeriod = ref("Today")
+
+function selectPeriod(period:string) {
+    selectedPeriod.value = period
+}
+
 </script>
 
 <template>
     <nav class="is-primary panel">
+        {{ selectedPeriod }}
         <span class="panel-tabs">
-
-            <!-- can use v-bind key -->
-            <!-- <a v-for="period of periods"
-            v-bind:key="period"
-            ></a> -->
-
-            <!-- can use v-bind class -->
-            <!-- <a v-for="period of periods"
-            v-bind:class="period"
-            ></a> -->
-
-            <!-- can use shot term to use v-bind  -->
             <a 
             v-for="period of periods"
-            :key="period" 
+            :key="period"
+            @click="selectPeriod(period)"
             >
                 {{ period }}
             </a>
