@@ -9,7 +9,7 @@ interface PostsState {
 }
 
 export const usePosts = defineStore("posts",{
-    state: () =>({
+    state: (): PostsState =>({
         foo: "foo"
     }),
 
