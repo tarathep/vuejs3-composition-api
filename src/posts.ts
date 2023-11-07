@@ -7,6 +7,10 @@ export interface Post {
     created: string
 }
 
+export interface TimeLinePost extends Omit<Post,'created'> {
+    created: DateTime
+}
+
 export const today: Post = {
     id: "1",
     title: "Today",
