@@ -5,7 +5,7 @@ const periods = ["Today", "This Week", "This Month"]
 
 const selectedPeriod = ref("Today")
 
-function selectPeriod(period:string) {
+function selectPeriod(period: string) {
     selectedPeriod.value = period
 }
 
@@ -13,13 +13,8 @@ function selectPeriod(period:string) {
 
 <template>
     <nav class="is-primary panel">
-        {{ selectedPeriod }}
         <span class="panel-tabs">
-            <a 
-            v-for="period of periods"
-            :key="period"
-            @click="selectPeriod(period)"
-            >
+            <a v-for="period of periods" :key="period" :class="{'is-active': period === selectedPeriod}" @click="selectPeriod(period)">
                 {{ period }}
             </a>
         </span>
