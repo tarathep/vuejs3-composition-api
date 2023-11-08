@@ -55,5 +55,9 @@ and execute with command
 ts-node --esm .\src\server\index.ts
 ```
 
+Install Vue Router
 
+```
+npm install vue-router
+```
 
