@@ -61,3 +61,8 @@ Install Vue Router
 npm install vue-router
 ```
 
+Markdown
+
+```bash
+npm install marked
+```
