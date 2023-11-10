@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-import { ref, onMounted, watch, watchEffect } from "vue"
+import { ref, onMounted, watch } from "vue"
 import { TimeLinePost } from '../posts';
-import { marked } from "marked";
+import { Marked } from "marked";
+import { markedHighlight } from "marked-highlight";
+import highlightjs from 'highlight.js';
+
 
 const props = defineProps<{
     post: TimeLinePost
@@ -11,20 +14,23 @@ const title = ref(props.post.title)
 const content = ref(props.post.markdown)
 const html = ref('')
 const contentEditable = ref<HTMLDivElement>()
+const marked = new Marked(
+    markedHighlight({
+        langPrefix: 'hljs language-',
+        highlight(code, lang) {
+            const language = highlightjs.getLanguage(lang) ? lang : 'plaintext';
+            return highlightjs.highlight(code, { language }).value;
+        }
+    })
+);
 
-// watch+imediate TRUE IS SAME watchEffect
-
-watchEffect(() => {
-    let parseResult = marked.parse(content.value);
-    html.value = parseResult
+watch(content, (newContent) => {
+    console.log(newContent);
+    let parseResult = marked.parse(newContent,null);
+    html.value = parseResult.toString()
+}, {
+    immediate: true
 })
-
-// watch(content, (newContent) => {
-//     let parseResult = marked.parse(newContent);
-//     html.value = parseResult
-// },{
-//     immediate: true
-// })
 
 onMounted(() => {
     if (!contentEditable.value) {
@@ -33,7 +39,7 @@ onMounted(() => {
     contentEditable.value.innerText = content.value
 })
 
-function handleInput () {
+function handleInput() {
     if (!contentEditable.value) {
         throw Error('ContentEditable DOM node was not found')
     }

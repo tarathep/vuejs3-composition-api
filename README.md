@@ -65,4 +65,7 @@ Markdown
 
 ```bash
 npm install marked
+npm install marked-highlight
+npm install highlight.js
 ```
+
