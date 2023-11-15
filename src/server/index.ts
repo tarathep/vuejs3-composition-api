@@ -9,7 +9,7 @@ app.use(bodyParser.json())
 const allPosts = [today,thisWeek,thisMonth]
 
 app.get("/posts", (_,res) => {
-    res.json([today,thisWeek,thisMonth])
+    res.json(allPosts)
 })
 
 app.post<{},{},Post>("/posts", (req,res) => {

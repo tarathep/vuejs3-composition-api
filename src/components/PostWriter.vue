@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue"
 import { TimeLinePost } from '../posts';
-import { Marked, use } from "marked";
+import { useRouter } from "vue-router";
+import { Marked } from "marked";
 import { markedHighlight } from "marked-highlight";
 import highlightjs from 'highlight.js';
 import debounce from 'lodash/debounce';
@@ -25,7 +26,8 @@ const marked = new Marked(
         }
     })
 );
-const posts = usePosts()
+const posts = usePosts();
+const router = useRouter();
 
 function parseHtml (markdown: string) {
     let parseResult = marked.parse(markdown,null);
@@ -51,14 +53,15 @@ function handleInput() {
     content.value = contentEditable.value?.innerText
 }
 
-function handleClick() {
+async function handleClick() {
     const newPost: TimeLinePost = {
         ...props.post,
         title: title.value,
         markdown: content.value,
         html: html.value
     }
-    posts.createPost(newPost)
+    await posts.createPost(newPost)
+    router.push("/")
 }
 </script>
 
