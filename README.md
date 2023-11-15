@@ -74,3 +74,7 @@ npm install highlight.js
 ```bash
 npm install lodash
 ```
+`Body Parser` on backend server for using at `app.use(bodyParser.json())`
+```bash
+npm install body-parser@1.19 @types/body-parser@1.19 --dev
+```
