@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue"
 import { TimeLinePost } from '../posts';
-import { Marked } from "marked";
+import { Marked, use } from "marked";
 import { markedHighlight } from "marked-highlight";
 import highlightjs from 'highlight.js';
+import debounce from 'lodash/debounce';
+import {usePosts} from "../stores/posts"
 
 
 const props = defineProps<{
@@ -23,12 +25,15 @@ const marked = new Marked(
         }
     })
 );
+const posts = usePosts()
 
-watch(content, (newContent) => {
-    console.log(newContent);
-    let parseResult = marked.parse(newContent,null);
+function parseHtml (markdown: string) {
+    let parseResult = marked.parse(markdown,null);
     html.value = parseResult.toString()
-}, {
+}
+
+
+watch(content, debounce(parseHtml,250), {
     immediate: true
 })
 
@@ -44,6 +49,16 @@ function handleInput() {
         throw Error('ContentEditable DOM node was not found')
     }
     content.value = contentEditable.value?.innerText
+}
+
+function handleClick() {
+    const newPost: TimeLinePost = {
+        ...props.post,
+        title: title.value,
+        markdown: content.value,
+        html: html.value
+    }
+    posts.createPost(newPost)
 }
 </script>
 
@@ -63,6 +78,14 @@ function handleInput() {
         </div>
         <div class="column">
             <div v-html="html"></div>
+        </div>
+    </div>
+
+    <div class="column">
+        <div class="column">
+            <button class="button is-primary is-pulled-right" @click="handleClick">
+                Save Post
+            </button>
         </div>
     </div>
 </template>

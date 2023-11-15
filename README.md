@@ -69,3 +69,8 @@ npm install marked-highlight
 npm install highlight.js
 ```
 
+
+`Lodash` A modern JavaScript utility library delivering modularity, performance & extras. https://lodash.com/
+```bash
+npm install lodash
+```
