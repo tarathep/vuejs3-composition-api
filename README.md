@@ -78,3 +78,10 @@ npm install lodash
 ```bash
 npm install body-parser@1.19 @types/body-parser@1.19 --dev
 ```
+
+to check syntax and running only file .ts
+
+```bash
+npx ts-node-esm src/validation.ts
+```
+
