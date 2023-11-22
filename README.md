@@ -87,6 +87,11 @@ npx ts-node-esm src/validation.ts
 
 ## Auhentication and Authorization
 
+<p align="center">
+  <img width="70%"src="./docs/diagram-auth.png">
+</p>
+
+
 ### Prepare to install dependencies
 
 ```bash
@@ -124,6 +129,75 @@ export default defineConfig({
   }
 })
 ```
+
+### Signing a JWT
+
+validaiton and debuging with https://jwt.io/
+
+go to the `src/server/index.ts` and import in below
+
+```ts
+...
+import express, {Request, Response} from 'express'
+import cookieParser from 'cookie-parser';
+import jsonwebtoken from 'jsonwebtoken';
+...
+
+const app = express()
+...
+app.use(cookieParser())
+...
+
+const SECRET = 'my-secret'
+const COOKIE = 'vuejs-jwt'
+
+function authenticate (id: string, req: Request, res:Response) {
+    const token = jsonwebtoken.sign({ id }, SECRET, {
+        issuer: 'vuejs-corse',
+        expiresIn: '30 days'
+    })
+    res.cookie(COOKIE,token);
+}
+
+app.post<{},{},NewUser>("/users", (req,res) => {
+    const user: User = {...req.body, id: (Math.random() * 10000).toFixed() }
+    allUsers.push(user)
+    authenticate(user.id,req,res)
+    const { password, ...rest} = user
+    res.json({...rest})
+})
+
+```
+
+restart server express and try to login
+
+you can see cookie like this
+
+<p align="center">
+  <img width="70%"src="./docs/cookie-jwt.png">
+</p>
+
+and go to the  https://jwt.io to debug and then enter verify secret
+
+<p align="center">
+  <img width="70%"src="./docs/debug-jwt-token.png">
+</p>
+
+to make more secure add  `http only` option
+
+```ts
+...
+function authenticate (id: string, _: Request, res:Response) {
+    ...
+    res.cookie(COOKIE,token,{ httpOnly: true });
+}
+...
+```
+
+<p align="center">
+  <img width="70%"src="./docs/debug-jwt-httponly.png">
+</p>
+
 
 
 
