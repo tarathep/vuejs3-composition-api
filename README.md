@@ -87,7 +87,7 @@ npx ts-node-esm src/validation.ts
 
 ## Auhentication and Authorization
 
-prepare to install dependencies
+### Prepare to install dependencies
 
 ```bash
 npm install cookie-parser@1.4.0 @types/cookie-parser@1.4.0 --include=dev
@@ -96,3 +96,34 @@ npm install jsonwebtoken@8.5.1 @types/jsonwebtoken@8.5.1 --include=dev
 
 npm install express-session@1.17.3 @types/express-session@1.17.3 --include=dev
 ```
+
+### Tooling - Vite Proxy Configuration
+
+Config at `vite.config.ts` to change path by proxy config : https://vitejs.dev/config/server-options.html#server-proxy
+
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  server: {
+    proxy: {
+      '^/api/.*': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => {
+          console.log(path)
+          const p = path.replace(/^\/api/, '')
+          console.log(p)
+          return p
+        },
+      }
+    }
+  }
+})
+```
+
+
+
