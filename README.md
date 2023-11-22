@@ -198,6 +198,80 @@ function authenticate (id: string, _: Request, res:Response) {
   <img width="70%"src="./docs/debug-jwt-httponly.png">
 </p>
 
+### Authenicating Users
+
+on `server/index.ts` add code to verify user jwt token
+
+```ts
+//...
+app.get("/current-user",(req,res) => {
+    try {
+        const token = req.cookies[COOKIE]
+        const result = jsonwebtoken.verify(token,SECRET) as { id: string }
+        console.log(result)
+        res.json( { id: result.id })
+    } catch (e) {
+        //...
+        res.status(404).end();
+    }
+})
+//...
+```
+
+and then add some code to fetch at `App.vue` to see the result.
+
+```ts
+<script>
+//...
+
+async function authenticate() {
+  const res = await window.fetch("/api/current-user",{
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  console.log(await res.json())
+}
+
+authenticate()
+</script>
+```
+
+restart server again, you can see console log result
+
+on network response result.
+
+<p align="center">
+  <img width="70%"src="./docs/debug-nw-jwt-path.png">
+</p>
+
+<p align="center">
+  <img width="70%"src="./docs/debug-nw-response-auth-pass.png">
+</p>
+
+can try to wrong secret by change `SECRET` to `xxxx` code at `index.ts`, and then will be return 404 in block catch
+
+```ts
+app.get("/current-user",(req,res) => {
+    try {
+        const token = req.cookies[COOKIE]
+        const result = jsonwebtoken.verify(token,'xxxx') as { id: string }
+        console.log(result)
+        res.json( { id: result.id })
+    } catch (e) {
+        //...
+        res.status(404).end();
+    }
+})
+```
+
+<p align="center">
+  <img width="70%"src="./docs/debug-jwt-response-wrong.png">
+</p>
+
+
+
 
 
 
