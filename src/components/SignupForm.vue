@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { computed, ref} from 'vue';
+import { computed, ref, useSlots } from 'vue';
 import FormInput from './FormInput.vue';
 import { NewUser } from '../users';
 import { validate, length, required } from '../validation';
+import { useUsers } from "../stores/users";
+import { useModal } from '../composables/modal';
 
 const username = ref('')
 const usernameStatus = computed(()=>{
@@ -18,16 +20,24 @@ const isInvalid = computed(() => {
     return (!usernameStatus.value.valid || !passwordStatus.value.valid);
 })
 
-function handleSubmit(){
+const userStore = useUsers()
+const modal = useModal()
+
+async function handleSubmit(){
     if (isInvalid.value) {
         return
     }
+
     const newUser: NewUser = {
         username: username.value,
         password: password.value
     }
 
-    console.log(newUser)
+    try {
+        await userStore.createUser(newUser)
+    } catch (e) {}
+    
+    modal.hideModal();
 }
 </script>
 
