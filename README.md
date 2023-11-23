@@ -272,6 +272,93 @@ app.get("/current-user",(req,res) => {
 
 
 
+### Conditionlly Rendering for Authenticated Users
 
+At  `src/stores/users.ts` add authenticate function
 
+```ts
+//...
+interface UsersState {
+  currentUserId?: string
+}
+
+export const useUsers = defineStore("users", {
+  state: () => ({
+    currentUserId: undefined
+  }),
+  actions: {
+    async authenticate() {
+      const res = await window.fetch("/api/current-user",{
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const result = await res.json()
+      this.currentUserId = result.id
+    },
+
+    createUser(newUser: NewUser) {
+      //...
+    },
+  },
+});
+
+```
+
+and call at `App.vue`
+
+```ts
+<script lang="ts" setup>
+//...
+import { useUsers } from './stores/users';
+
+//...
+const usersStore = useUsers();
+//...
+
+// to call 
+usersStore.authenticate();
+</script>
+```
+
+after that go to the `Navbar.vue` to add button Logout
+
+```ts
+<script lang="ts" setup>
+//...
+import { useUsers } from '../stores/users';
+
+const modal = useModal()
+const usersStore = useUsers()
+</script>
+
+<template>
+    <div class="navbar">
+        <div class="navbar-end">
+            <div v-if="usersStore.currentUserId" class="buttons">
+                <RouterLink to="/posts/new" class="button">New Post</RouterLink>
+                <button class="button" @click="modal.showModal()">Log Out</button>
+            </div>
+
+            <div v-else class="buttons">
+                <button class="button" @click="modal.showModal()">Sign Up</button>
+                <RouterLink to="/posts/new" class="button">Sign In</RouterLink>
+            </div>
+        </div>
+    </div>
+
+    <Teleport to="#modal">
+        <SignupForm />
+    </Teleport>
+</template>
+```
+to try this, restart vue and try to remove cookie or login you can see affect button will be change between `Sign out` and `Sign In` .
+
+<p align="center">
+  <img width="70%"src="./docs/login-button-randering-rm-cookie.png">
+</p>
+
+<p align="center">
+  <img width="70%"src="./docs/login-button-randering-cookie.png">
+</p>
 
